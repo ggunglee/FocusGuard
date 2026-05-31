@@ -1,0 +1,34 @@
+﻿<Window x:Class="FocusGuard.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="환경 설정" Height="340" Width="340"
+        WindowStartupLocation="CenterOwner" Background="#F8FAFC" WindowStyle="ToolWindow"
+        UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display" TextOptions.TextRenderingMode="ClearType">
+    <Grid Margin="20">
+        <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="⚙️ 환경 설정" FontSize="22" FontWeight="Bold" Margin="0,0,0,20" Foreground="#1E293B" HorizontalAlignment="Center"/>
+            
+            <TextBlock Text="집중 중 위젯 투명도 (10% ~ 100%)" FontWeight="SemiBold" Foreground="#64748B" Margin="0,0,0,5" HorizontalAlignment="Center"/>
+            <Slider Name="SliderOpacity" Minimum="0.1" Maximum="1.0" TickFrequency="0.1" IsSnapToTickEnabled="True" Value="0.3" Margin="10,0,10,10"/>
+            <TextBlock Name="TxtOpacityValue" Text="현재 투명도: 30%" HorizontalAlignment="Center" Foreground="#3B82F6" FontWeight="Bold" Margin="0,0,0,20"/>
+            
+            <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="8" Padding="12" Margin="0,0,0,25" Background="White">
+                <StackPanel>
+                    <TextBlock Text="🍅 뽀모도로 휴식 모드 선택" FontWeight="Bold" Foreground="#475569" Margin="0,0,0,8" HorizontalAlignment="Center"/>
+                    <CheckBox Name="ChkRealRest" Content="🔒 강제 찐휴식 모드 사용 (화면 잠금)" FontSize="12" FontWeight="SemiBold" Foreground="#EF4444" HorizontalAlignment="Center" Cursor="Hand"/>
+                    <TextBlock Text="* 체크 해제 시 휴식 시간에 자유롭게 딴짓이 가능합니다." FontSize="10" Foreground="#94A3B8" Margin="0,4,0,0" HorizontalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <Button Content="저장 및 닫기" Height="40" Background="#3B82F6" Foreground="White" FontWeight="Bold" Click="Save_Click" Cursor="Hand">
+                <Button.Template>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Button.Template>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Window>

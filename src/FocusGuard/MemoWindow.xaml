@@ -1,0 +1,52 @@
+<Window x:Class="FocusGuard.MemoWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="집중 메모장" Height="400" Width="320"
+        WindowStyle="None" AllowsTransparency="True" Background="Transparent"
+        Topmost="True" ResizeMode="CanResizeWithGrip" MouseLeftButtonDown="Window_MouseLeftButtonDown">
+    <Grid Margin="10">
+        <!-- Main Panel with Shadows and Premium Border -->
+        <Border CornerRadius="12" Background="#FFFDF6" BorderBrush="#E2E8F0" BorderThickness="1">
+            <Border.Effect>
+                <DropShadowEffect Color="#0F172A" Opacity="0.12" BlurRadius="18" ShadowDepth="4" Direction="270"/>
+            </Border.Effect>
+            
+            <Grid Margin="12">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <!-- Header / Title Bar -->
+                <Grid Grid.Row="0" Margin="0,0,0,10">
+                    <TextBlock Text="📝 집중 메모장" FontWeight="Bold" FontSize="14" Foreground="#1E293B" VerticalAlignment="Center"/>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                        <CheckBox Name="ChkTopmost" Content="항상 위에" FontSize="11" Foreground="#475569" VerticalAlignment="Center" IsChecked="True" Checked="ChkTopmost_Checked" Unchecked="ChkTopmost_Unchecked" Margin="0,0,10,0" Cursor="Hand"/>
+                    </StackPanel>
+                </Grid>
+                
+                <!-- Content Text Area -->
+                <TextBox Grid.Row="1" Name="TxtMemo" 
+                         TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto"
+                         Background="#FFFDF9" BorderBrush="#CBD5E1" BorderThickness="1" Padding="10"
+                         FontSize="13" FontFamily="Consolas, Malgun Gothic" Foreground="#334155"
+                         TextChanged="TxtMemo_TextChanged"/>
+                
+                <!-- Footer Status and Controls -->
+                <Grid Grid.Row="2" Margin="0,10,0,0">
+                    <TextBlock Name="TxtSaveStatus" Text="자동 저장 완료" FontSize="11" Foreground="#10B981" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <Button Content="닫기" HorizontalAlignment="Right" Width="65" Height="24" Background="#E2E8F0" Foreground="#334155" FontWeight="Bold" FontSize="11" Cursor="Hand" Click="BtnClose_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                </Grid>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>
