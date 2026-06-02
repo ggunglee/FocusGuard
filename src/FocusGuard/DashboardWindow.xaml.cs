@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 using System.Linq;
@@ -48,6 +48,9 @@ namespace FocusGuard
                 while (dateStrings.Contains(checkDate.ToString("yyyy-MM-dd"))) { streak++; checkDate = checkDate.AddDays(-1); }
             }
             TxtStreak.Text = streak > 0 ? $"{streak}일째!" : "오늘부터 1일!";
+
+            // 오늘 완료한 과제 리스트 바인딩
+            ListTodayMissions.ItemsSource = todayRecords.ToList();
         }
 
         // 🔥 CSV 내보내기 핵심 기능
@@ -92,6 +95,22 @@ namespace FocusGuard
             int total = focus + distract;
             if (total == 0) return "0%";
             return $"{((double)focus / total * 100):F1}%";
+        }
+
+        private void BtnDeleteSession_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as System.Windows.Controls.Button;
+            var record = btn?.DataContext as SessionRecord;
+
+            if (record != null)
+            {
+                if (MessageBox.Show($"'{record.target_name}' 공부 기록을 삭제하시겠습니까?", "기록 삭제 확인", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+                {
+                    var dbHelper = new DatabaseHelper();
+                    dbHelper.DeleteSession(record.id);
+                    LoadStats(); // 통계 및 리스트 즉각 갱신
+                }
+            }
         }
 
         private void Close_Click(object sender, RoutedEventArgs e) { this.Close(); }

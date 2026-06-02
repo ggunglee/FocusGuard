@@ -3,8 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
         Title="Web Focus Lock" WindowState="Maximized" WindowStyle="None" Topmost="True"
-        ShowInTaskbar="False" Closing="Window_Closing">
+        ShowInTaskbar="False" Closing="Window_Closing" Background="#FFEAEAEA">
     <Grid>
-        <wv2:WebView2 Name="webView" />
+        <wv2:WebView2 Name="webView" DefaultBackgroundColor="Transparent"/>
     </Grid>
 </Window>

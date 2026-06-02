@@ -194,6 +194,15 @@ namespace FocusGuard
             this.DialogResult = false;
             this.Close();
         }
+
+        private void InputQuote_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                BtnConfirm_Click(sender, e);
+            }
+        }
     }
 }
 

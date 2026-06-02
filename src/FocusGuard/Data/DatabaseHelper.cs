@@ -8,6 +8,7 @@ namespace FocusGuard.Data
 {
     public class SessionRecord
     {
+        public int id { get; set; }
         public string target_name { get; set; }
         public int planned_study_seconds { get; set; }
         public int actual_focused_seconds { get; set; }
@@ -15,6 +16,41 @@ namespace FocusGuard.Data
         public int total_elapsed_seconds { get; set; }
         public string started_at { get; set; }
         public string memo { get; set; }
+
+        public string DisplayFocusTime
+        {
+            get
+            {
+                int seconds = actual_focused_seconds;
+                if (seconds == 0) return "0분";
+                if (seconds >= 3600) return $"{seconds / 3600}시간 {(seconds % 3600) / 60}분";
+                if (seconds >= 60) return $"{seconds / 60}분 {seconds % 60}초";
+                return $"{seconds}초";
+            }
+        }
+
+        public string DisplayDistractTime
+        {
+            get
+            {
+                int seconds = distracted_seconds;
+                if (seconds == 0) return "0초";
+                if (seconds >= 60) return $"{seconds / 60}분 {seconds % 60}초";
+                return $"{seconds}초";
+            }
+        }
+
+        public string DisplayStartedAt
+        {
+            get
+            {
+                if (DateTime.TryParse(started_at, out DateTime dt))
+                {
+                    return dt.ToString("HH:mm:ss");
+                }
+                return started_at;
+            }
+        }
     }
 
     public class MissionRecord
@@ -213,6 +249,25 @@ namespace FocusGuard.Data
             using (var connection = new SqliteConnection(_connectionString))
             {
                 connection.Execute("DELETE FROM missions WHERE id = @i", new { i = id });
+            }
+        }
+
+        public void UpdateMission(int id, string title, int mins, string app, string res)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                connection.Execute(
+                    "UPDATE missions SET title = @t, duration_minutes = @m, target_app = @a, resource_path = @r WHERE id = @i",
+                    new { t = title, m = mins, a = app, r = res, i = id }
+                );
+            }
+        }
+
+        public void DeleteSession(int id)
+        {
+            using (var connection = new SqliteConnection(_connectionString))
+            {
+                connection.Execute("DELETE FROM sessions WHERE id = @i", new { i = id });
             }
         }
     }

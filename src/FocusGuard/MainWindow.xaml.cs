@@ -15,6 +15,7 @@ namespace FocusGuard
         private const string ReadingLogToken = "[READING_LOG]";
         private DatabaseHelper _dbHelper;
         private bool _isSessionRunning = false;
+        private int? _editingMissionId = null;
 
         public MainWindow()
         {
@@ -295,7 +296,17 @@ namespace FocusGuard
             string app = string.Join(",", SplitTokens(InputApp.Text));
             string res = string.Join(", ", resources);
 
-            _dbHelper.AddMission(InputTitle.Text, mins, app, res);
+            if (_editingMissionId.HasValue)
+            {
+                _dbHelper.UpdateMission(_editingMissionId.Value, InputTitle.Text, mins, app, res);
+                _editingMissionId = null;
+                BtnAddOrUpdateMission.Content = "추가";
+                BtnCancelEdit.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                _dbHelper.AddMission(InputTitle.Text, mins, app, res);
+            }
 
             InputTitle.Text = "";
             InputTime.Text = "";
@@ -318,8 +329,54 @@ namespace FocusGuard
                 {
                     _dbHelper.DeleteMission(mission.id);
                     LoadMissionsToUI();
+                    
+                    // 삭제하려는 과제가 현재 수정 중이던 과제라면 수정 모드를 취소합니다.
+                    if (_editingMissionId == mission.id)
+                    {
+                        BtnCancelEdit_Click(null, null);
+                    }
                 }
             }
+        }
+
+        private void BtnEditMission_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            var mission = btn?.DataContext as MissionRecord;
+
+            if (mission != null)
+            {
+                _editingMissionId = mission.id;
+                InputTitle.Text = mission.title;
+                InputTime.Text = mission.duration_minutes.ToString();
+
+                var rawResources = SplitTokens(mission.resource_path).ToList();
+                bool isReadingLog = rawResources.Any(IsReadingLogToken);
+                ChkUseReadingLog.IsChecked = isReadingLog;
+
+                var normalResources = rawResources.Where(r => !IsReadingLogToken(r)).ToList();
+                InputRes.Text = string.Join(", ", normalResources);
+                InputApp.Text = mission.target_app;
+
+                UpdateSelectedAppsText();
+
+                BtnAddOrUpdateMission.Content = "수정";
+                BtnCancelEdit.Visibility = Visibility.Visible;
+            }
+        }
+
+        private void BtnCancelEdit_Click(object sender, RoutedEventArgs e)
+        {
+            _editingMissionId = null;
+            InputTitle.Text = "";
+            InputTime.Text = "";
+            InputRes.Text = "";
+            InputApp.Text = "";
+            ChkUseReadingLog.IsChecked = false;
+            UpdateSelectedAppsText();
+
+            BtnAddOrUpdateMission.Content = "추가";
+            BtnCancelEdit.Visibility = Visibility.Collapsed;
         }
 
         private void BtnStartMission_Click(object sender, RoutedEventArgs e)
@@ -352,24 +409,39 @@ namespace FocusGuard
                 !hasRealAppTarget &&
                 nonWebResources.Count == 0;
 
+            var wm = new WindowManager();
+            var monitors = wm.GetMonitors();
+            bool isMultiMonitor = monitors.Count >= 2;
+
+            // 다중 모니터일 경우 독서기록기 URL이 존재한다면 체크박스 체크 여부와 상관없이 무조건 띄우기
+            bool autoReadingLog = isMultiMonitor && !string.IsNullOrWhiteSpace(AppSettings.ReadingLogUrl);
+            bool shouldOpenReadingLog = readingLogRequested || autoReadingLog;
+
             var webWins = new List<WebLockWindow>();
 
             foreach (string web in webResources)
             {
-                var webWin = new WebLockWindow(web, strictLock: normalWebStrict, compactTop: false);
+                // 듀얼 모니터일 경우 공부 URL은 주 모니터 영역(monitors[0])에 배치
+                var monitorBounds = isMultiMonitor ? (WindowManager.RECT?)monitors[0].Bounds : null;
+                var webWin = new WebLockWindow(web, strictLock: normalWebStrict, compactTop: false, monitorBounds: monitorBounds);
                 webWins.Add(webWin);
                 webWin.Show();
             }
 
-            if (readingLogRequested)
+            if (shouldOpenReadingLog)
             {
                 if (string.IsNullOrWhiteSpace(AppSettings.ReadingLogUrl))
                 {
-                    MessageBox.Show("기록용 사이트 URL이 비어 있어 기록 사이트 창은 열지 않습니다.\n환경 설정에서 URL을 저장해주세요.", "기록 사이트 URL 없음");
+                    if (readingLogRequested)
+                    {
+                        MessageBox.Show("기록용 사이트 URL이 비어 있어 기록 사이트 창은 열지 않습니다.\n환경 설정에서 URL을 저장해주세요.", "기록 사이트 URL 없음");
+                    }
                 }
                 else
                 {
-                    var logWin = new WebLockWindow(AppSettings.ReadingLogUrl, strictLock: false, compactTop: true);
+                    // 듀얼 모니터일 경우 독서기록기는 보조 모니터 1 영역(monitors[1])에 배치
+                    var monitorBounds = isMultiMonitor ? (WindowManager.RECT?)monitors[1].Bounds : null;
+                    var logWin = new WebLockWindow(AppSettings.ReadingLogUrl, strictLock: false, compactTop: true, monitorBounds: monitorBounds);
                     webWins.Add(logWin);
                     logWin.Show();
                 }

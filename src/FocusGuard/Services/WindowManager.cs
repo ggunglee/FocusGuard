@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -19,6 +20,42 @@ namespace FocusGuard.Services
 
     public class WindowManager
     {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct RECT
+        {
+            public int Left;
+            public int Top;
+            public int Right;
+            public int Bottom;
+
+            public int Width => Right - Left;
+            public int Height => Bottom - Top;
+        }
+
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        public struct MONITORINFO
+        {
+            public int cbSize;
+            public RECT rcMonitor;
+            public RECT rcWork;
+            public int dwFlags;
+        }
+
+        public class MonitorInfo
+        {
+            public RECT Bounds { get; set; }
+            public RECT WorkingArea { get; set; }
+            public bool IsPrimary { get; set; }
+        }
+
+        private delegate bool MonitorEnumDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData);
+
+        [DllImport("user32.dll")]
+        private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip, MonitorEnumDelegate lpfnEnum, IntPtr dwData);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFO lpmi);
+
         [DllImport("user32.dll")]
         private static extern IntPtr GetForegroundWindow();
 
@@ -31,6 +68,24 @@ namespace FocusGuard.Services
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        private static extern bool SetWindowPos(
+            IntPtr hWnd,
+            IntPtr hWndInsertAfter,
+            int X,
+            int Y,
+            int cx,
+            int cy,
+            uint uFlags
+        );
+
+        [DllImport("user32.dll")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        private static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
+        private static readonly IntPtr HWND_NOTOPMOST = new IntPtr(-2);
+        private const int SW_RESTORE = 9;
 
         public bool IsTargetWindowActive(string targetProcessName, string targetTitleKeyword = null)
         {
@@ -94,6 +149,53 @@ namespace FocusGuard.Services
                 }
             }
             return list;
+        }
+
+        public List<MonitorInfo> GetMonitors()
+        {
+            var monitors = new List<MonitorInfo>();
+            EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref RECT lprcMonitor, IntPtr dwData)
+            {
+                var mi = new MONITORINFO();
+                mi.cbSize = Marshal.SizeOf(typeof(MONITORINFO));
+                if (GetMonitorInfo(hMonitor, ref mi))
+                {
+                    monitors.Add(new MonitorInfo
+                    {
+                        Bounds = mi.rcMonitor,
+                        WorkingArea = mi.rcWork,
+                        IsPrimary = (mi.dwFlags & 1) != 0
+                    });
+                }
+                return true;
+            }, IntPtr.Zero);
+
+            return monitors.OrderByDescending(m => m.IsPrimary).ToList();
+        }
+
+        public void SetTargetWindowToTopmostAndSize(string targetProcessName, int left, int top, int width, int height, bool makeTopmost)
+        {
+            Process[] processes = Process.GetProcessesByName(targetProcessName);
+            foreach (var proc in processes)
+            {
+                IntPtr hwnd = proc.MainWindowHandle;
+                if (hwnd != IntPtr.Zero)
+                {
+                    ShowWindow(hwnd, SW_RESTORE);
+
+                    IntPtr insertAfter = makeTopmost ? HWND_TOPMOST : HWND_NOTOPMOST;
+
+                    SetWindowPos(
+                        hwnd,
+                        insertAfter,
+                        left,
+                        top,
+                        width,
+                        height,
+                        0x0040 // SWP_SHOWWINDOW
+                    );
+                }
+            }
         }
     }
 }

@@ -206,8 +206,6 @@ namespace FocusGuard
                     this.Opacity = this.IsMouseOver ? 1.0 : AppSettings.FocusedOpacity;
                     TxtStatus.Text = "● 집중 중";
                     TxtStatus.Foreground = System.Windows.Media.Brushes.Green;
-
-                    RestoreStrictWebWindowsIfNeeded();
                 }
                 else
                 {
@@ -215,9 +213,6 @@ namespace FocusGuard
                     this.Opacity = 1.0;
                     TxtStatus.Text = "⚠️ 딴짓 감지됨!";
                     TxtStatus.Foreground = System.Windows.Media.Brushes.Red;
-
-                    BringFirstAllowedTargetToFront();
-                    SystemSounds.Hand.Play();
                 }
             }
         }
@@ -295,80 +290,7 @@ namespace FocusGuard
             }
         }
 
-        private void RestoreStrictWebWindowsIfNeeded()
-        {
-            foreach (var webWin in _linkedWebWindows)
-            {
-                try
-                {
-                    if (webWin != null && webWin.IsStrictLock && !webWin.IsCompactTop)
-                    {
-                        if (webWin.WindowState == WindowState.Minimized)
-                        {
-                            webWin.WindowState = WindowState.Maximized;
-                        }
-                        // 허용 앱(예: 메모장)이 활성 상태이므로, 전체화면 웹뷰 뒤로 깔리지 않도록 Topmost를 임시 해제합니다.
-                        webWin.SetStrictLockTopmost(false);
-                    }
-                }
-                catch { }
-            }
-        }
 
-        private void BringFirstAllowedTargetToFront()
-        {
-            // 모든 전체화면 웹뷰의 Topmost를 복구하여 불허 프로그램(딴짓)을 화면 전체로 덮어서 차단합니다.
-            foreach (var webWin in _linkedWebWindows)
-            {
-                try
-                {
-                    if (webWin != null && webWin.IsStrictLock && !webWin.IsCompactTop)
-                    {
-                        webWin.SetStrictLockTopmost(true);
-                    }
-                }
-                catch { }
-            }
-
-            var preferredWeb = _linkedWebWindows.FirstOrDefault(w => w != null && !w.IsCompactTop)
-                               ?? _linkedWebWindows.FirstOrDefault(w => w != null);
-
-            if (preferredWeb != null)
-            {
-                try
-                {
-                    preferredWeb.Visibility = Visibility.Visible;
-
-                    if (preferredWeb.WindowState == WindowState.Minimized)
-                    {
-                        preferredWeb.WindowState = preferredWeb.IsStrictLock ? WindowState.Maximized : WindowState.Normal;
-                    }
-
-                    preferredWeb.Activate();
-                }
-                catch { }
-            }
-
-            // 이제 허용 앱(메모장 등)을 소환하여 전면에 배치해야 하므로, 
-            // 전체화면 웹뷰의 Topmost를 잠시 false로 낮추어 허용 앱이 그 위로 올라올 수 있게 합니다.
-            foreach (var webWin in _linkedWebWindows)
-            {
-                try
-                {
-                    if (webWin != null && webWin.IsStrictLock && !webWin.IsCompactTop)
-                    {
-                        webWin.SetStrictLockTopmost(false);
-                    }
-                }
-                catch { }
-            }
-
-            // 웹뷰를 먼저 띄운 뒤, 등록된 허용 앱들도 모두 순차적으로 전면으로 소환합니다.
-            foreach (string app in _targetApps)
-            {
-                _windowManager.BringTargetToForeground(app);
-            }
-        }
 
         private void BtnEmergency_Click(object sender, RoutedEventArgs e)
         {

@@ -135,10 +135,11 @@
                             </Button>
                         </StackPanel>
 
-                        <!-- 입력 2라인 (리소스 URL/경로 입력, 붙여넣기, 파일찾기, 추가 버튼) -->
+                        <!-- 입력 2라인 (리소스 URL/경로 입력, 붙여넣기, 파일찾기, 취소, 추가 버튼) -->
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="Auto"/>
@@ -167,7 +168,17 @@
                                 </Button.Template>
                             </Button>
 
-                            <Button Grid.Column="3" Content="추가" Width="50" Height="30" Margin="8,0,0,0" Background="#3B82F6" Foreground="White" FontWeight="Bold" FontSize="12" Cursor="Hand" Click="BtnAddMission_Click">
+                            <Button Name="BtnCancelEdit" Grid.Column="3" Content="취소" Width="40" Height="30" Margin="6,0,0,0" Background="#EF4444" Foreground="White" FontWeight="Bold" FontSize="12" Cursor="Hand" Click="BtnCancelEdit_Click" Visibility="Collapsed">
+                                <Button.Template>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Button.Template>
+                            </Button>
+
+                            <Button Name="BtnAddOrUpdateMission" Grid.Column="4" Content="추가" Width="50" Height="30" Margin="6,0,0,0" Background="#3B82F6" Foreground="White" FontWeight="Bold" FontSize="12" Cursor="Hand" Click="BtnAddMission_Click">
                                 <Button.Template>
                                     <ControlTemplate TargetType="Button">
                                         <Border Background="{TemplateBinding Background}" CornerRadius="6">
@@ -209,8 +220,18 @@
                                             <TextBlock Text="{Binding target_app, StringFormat='🖥️ {0}'}" Foreground="#10B981" FontSize="11" FontWeight="Bold"/>
                                         </StackPanel>
 
-                                        <!-- 3. 우측: 조작 버튼 (삭제 & START) -->
+                                        <!-- 3. 우측: 조작 버튼 (수정 & 삭제 & START) -->
                                         <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+                                            <Button Content="✏️" Width="30" Height="32" Margin="0,0,6,0" Background="#F8FAFC" Foreground="#3B82F6" FontSize="12" Cursor="Hand" Click="BtnEditMission_Click" ToolTip="과제 수정">
+                                                <Button.Template>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}" CornerRadius="6" BorderBrush="#E2E8F0" BorderThickness="1">
+                                                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Button.Template>
+                                            </Button>
+
                                             <Button Content="🗑" Width="30" Height="32" Margin="0,0,6,0" Background="#F8FAFC" Foreground="#EF4444" FontSize="14" Cursor="Hand" Click="BtnDeleteMission_Click">
                                                 <Button.Template>
                                                     <ControlTemplate TargetType="Button">
