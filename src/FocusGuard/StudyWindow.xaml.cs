@@ -120,6 +120,9 @@ namespace FocusGuard
             TxtCurrentTime.Text = DateTime.Now.ToString("HH:mm");
             
             this.Topmost = true;
+            // 사전/번역 창이 열려있으면 리딩 화면 위에 유지
+            if (_dictWindow != null && _dictWindow.IsVisible)
+                _dictWindow.Topmost = true;
             _elapsedTotalSeconds++;
             _currentPhaseSeconds--;
 
@@ -221,6 +224,7 @@ namespace FocusGuard
         {
             if (this.IsActive || this.IsKeyboardFocusWithin) return true;
             if (_memoWindow != null && _memoWindow.IsVisible && (_memoWindow.IsActive || _memoWindow.IsKeyboardFocusWithin)) return true;
+            if (_dictWindow != null && _dictWindow.IsVisible && (_dictWindow.IsActive || _dictWindow.IsKeyboardFocusWithin)) return true;
 
             foreach (var webWin in _linkedWebWindows)
             {

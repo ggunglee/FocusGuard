@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="사전 및 번역" Height="450" Width="550"
         WindowStartupLocation="CenterOwner" WindowStyle="ToolWindow" Background="#F8FAFC"
+        Topmost="True"
         UseLayoutRounding="True" SnapsToDevicePixels="True" TextOptions.TextFormattingMode="Display"
         Loaded="Window_Loaded">
     <Grid Margin="15">
