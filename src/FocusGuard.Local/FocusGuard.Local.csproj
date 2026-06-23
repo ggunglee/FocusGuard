@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <AssemblyName>FocusGuard</AssemblyName>
+    <RootNamespace>FocusGuard</RootNamespace>
+    <EnableDefaultApplicationDefinition>false</EnableDefaultApplicationDefinition>
+    <EnableDefaultPageItems>false</EnableDefaultPageItems>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ApplicationDefinition Include="..\FocusGuard\App.xaml" Link="App.xaml" />
+    <Page Include="..\FocusGuard\**\*.xaml"
+          Exclude="..\FocusGuard\App.xaml;..\FocusGuard\DictTranslatorWindow.xaml;..\FocusGuard\bin\**;..\FocusGuard\obj\**">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Page>
+    <Page Include="DictTranslatorWindow.xaml" />
+
+    <Compile Include="..\FocusGuard\**\*.cs"
+             Exclude="..\FocusGuard\DictTranslatorWindow.xaml.cs;..\FocusGuard\Data\DatabaseHelper.cs;..\FocusGuard\MemoWindow.xaml.cs;..\FocusGuard\StudyWindow.xaml.cs;..\FocusGuard\bin\**;..\FocusGuard\obj\**">
+      <Link>%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </Compile>
+    <Compile Include="**\*.cs" Exclude="bin\**;obj\**" />
+
+    <PackageReference Include="Dapper" Version="2.1.79" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.8" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.3967.48" />
+  </ItemGroup>
+</Project>

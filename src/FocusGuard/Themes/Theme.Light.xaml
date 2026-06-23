@@ -1,0 +1,57 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <!-- Light Theme -->
+    <!-- Window Background Colors -->
+    <Color x:Key="WindowBackgroundStartColor">#F8FAFC</Color>
+    <Color x:Key="WindowBackgroundEndColor">#EFF6FF</Color>
+    
+    <LinearGradientBrush x:Key="WindowBackgroundBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource WindowBackgroundStartColor}" Offset="0.0"/>
+        <GradientStop Color="{StaticResource WindowBackgroundEndColor}" Offset="1.0"/>
+    </LinearGradientBrush>
+
+    <!-- General Border -->
+    <SolidColorBrush x:Key="WindowBorderBrush" Color="#E2E8F0"/>
+    
+    <!-- Text Colors -->
+    <SolidColorBrush x:Key="TextTitleBrush" Color="#0F172A"/>
+    <SolidColorBrush x:Key="TextPrimaryBrush" Color="#1E293B"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush" Color="#475569"/>
+    <SolidColorBrush x:Key="TextMutedBrush" Color="#94A3B8"/>
+    
+    <!-- Card / Panel Colors -->
+    <SolidColorBrush x:Key="CardBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="CardBorderBrush" Color="#E2E8F0"/>
+    <Color x:Key="CardShadowColor">#0F172A</Color>
+    
+    <!-- Inputs (TextBox, etc) -->
+    <SolidColorBrush x:Key="InputBackgroundBrush" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="InputForegroundBrush" Color="#0F172A"/>
+    <SolidColorBrush x:Key="InputBorderBrush" Color="#CBD5E1"/>
+
+    <!-- Buttons -->
+    <!-- Primary (Accent) -->
+    <SolidColorBrush x:Key="PrimaryButtonBrush" Color="#3B82F6"/>
+    <SolidColorBrush x:Key="PrimaryButtonTextBrush" Color="#FFFFFF"/>
+    <!-- Secondary (Grey) -->
+    <SolidColorBrush x:Key="SecondaryButtonBrush" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="SecondaryButtonTextBrush" Color="#334155"/>
+    <!-- Presets -->
+    <SolidColorBrush x:Key="PresetButtonBrush" Color="#E2E8F0"/>
+    <SolidColorBrush x:Key="PresetButtonTextBrush" Color="#475569"/>
+    <!-- Danger -->
+    <SolidColorBrush x:Key="DangerButtonBrush" Color="#EF4444"/>
+    <SolidColorBrush x:Key="DangerButtonTextBrush" Color="#FFFFFF"/>
+    <!-- Success / Start -->
+    <SolidColorBrush x:Key="SuccessButtonBrush" Color="#1E293B"/>
+    <SolidColorBrush x:Key="SuccessButtonTextBrush" Color="#FFFFFF"/>
+    <!-- Memo -->
+    <SolidColorBrush x:Key="MemoButtonBrush" Color="#FEF08A"/>
+    <SolidColorBrush x:Key="MemoButtonTextBrush" Color="#854D0E"/>
+    
+    <!-- Accent Color (e.g. timers, special labels) -->
+    <SolidColorBrush x:Key="AccentBrush" Color="#3B82F6"/>
+    <SolidColorBrush x:Key="SuccessLabelBrush" Color="#10B981"/>
+    <SolidColorBrush x:Key="DangerLabelBrush" Color="#EF4444"/>
+    <SolidColorBrush x:Key="TimerProgressTrackBrush" Color="#F1F5F9"/>
+</ResourceDictionary>

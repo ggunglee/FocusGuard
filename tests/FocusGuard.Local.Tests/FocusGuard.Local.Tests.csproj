@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.8" />
+    <Compile Include="..\..\src\FocusGuard.Local\Infrastructure\UserDataPaths.cs" Link="Source\UserDataPaths.cs" />
+    <Compile Include="..\..\src\FocusGuard.Local\Data\DictionaryHistoryRepository.cs" Link="Source\DictionaryHistoryRepository.cs" Condition="Exists('..\..\src\FocusGuard.Local\Data\DictionaryHistoryRepository.cs')" />
+    <Compile Include="..\..\src\FocusGuard.Local\Services\GoogleTranslationService.cs" Link="Source\GoogleTranslationService.cs" Condition="Exists('..\..\src\FocusGuard.Local\Services\GoogleTranslationService.cs')" />
+    <Compile Include="..\..\src\FocusGuard\Services\FocusRecoveryTracker.cs" Link="Source\FocusRecoveryTracker.cs" />
+    <Compile Include="..\..\src\FocusGuard\Services\SessionExitCoordinator.cs" Link="Source\SessionExitCoordinator.cs" />
+  </ItemGroup>
+</Project>
